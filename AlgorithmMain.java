@@ -3,6 +3,7 @@ import java.util.Scanner;
 public class AlgorithmMain {
 	
 	private static int amount = 0;
+	private static int out = 0;
 	private static int temp = 0;
 	
 	public static void main(String args[]) {
@@ -11,11 +12,17 @@ public class AlgorithmMain {
 		System.out.println("Select a job number: ");
 		amount = scnr.nextInt();
 		
+		System.out.println("Outliers: ");
+		out = scnr.nextInt();
+		
 		int time = 0;
 		int randomArr = 0;
 		int TQ = 0;
 		boolean working = true;
 		boolean notEdited = false;
+		boolean taken = false;
+		
+		int outl[] = new int[out];
 		
 		int numList[] = new int[amount];
 		int sjfList[] = new int[amount];
@@ -45,21 +52,40 @@ public class AlgorithmMain {
 		int avgTurn = 0;
 		
 		for(int i = 0; i < amount; i++) {	// Random burst time generator
-			int random = RandomNumbers.randNum(15) + 6;
+			int random = RandomNumbers.randNum(4) + 5;
 			numList[i] = random;
 			sjfList[i] = random;
 			rrList[i] = random;
 		}
 		
+		for(int i = 0; i < out;) {
+			int random = RandomNumbers.randNum(amount);
+			for(int j = 0; j < out; j++) {
+				if (outl[j] == random) {
+					taken = true;
+				}
+			}
+			if (taken == true) {
+			}
+			else {
+				outl[i] = random;
+				numList[i] = numList[i] * 3;
+				sjfList[i] = sjfList[i] * 3;
+				rrList[i] = rrList[i] * 3;
+				i++;
+			}
+			taken = false;
+		}
+		
 		arrivalTime[0] = 0;
 		arrivalSjf[0] = 0; 
 		for (int i = 1; i < amount; i++) {	//Random arrival time generator
-			randomArr = randomArr + (RandomNumbers.randNum(5) + 3);
+			randomArr = (RandomNumbers.randNum(3) + 4);
 			arrivalTime[i] = randomArr;
 			arrivalSjf[i] = randomArr;
 		}
 		
-		while(working) {	// Change the SJF 
+		while(working) {	// Organize jobs in SJF from shortest to longest
 			notEdited = true;
 			for(int i = 0; i < amount; i++) {
 				if(i == amount-1) {
@@ -81,6 +107,15 @@ public class AlgorithmMain {
 			if(notEdited) {
 				working = false;
 				}
+		}
+		
+		int Arr = 0;
+		int ArrS = 0;
+		for(int i = 0; i < amount; i++) {
+			Arr = Arr + arrivalTime[i];
+			ArrS = ArrS + arrivalSjf[i];
+			arrivalTime[i] = Arr;
+			arrivalSjf[i] = ArrS;
 		}
 		
 		for(int i = 0; i < amount;) {	// Running jobs in "CPU" for FCFS
